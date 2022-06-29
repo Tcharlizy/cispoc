@@ -1,0 +1,32 @@
+
+<?php
+include("conexao.php");
+
+  $msg = false;
+
+  if(isset($_POST['nome'])){
+	$nome			= $_POST["nome"];
+	$sequencia		= $_POST["sequencia"];
+	
+	$sql =  "select * from `protocolo` where `codigo`='$nome'";
+	$resultado = mysqli_query($con, $sql) or die ("Dados nao encontrados!");
+	$registo = mysqli_fetch_array($resultado);
+	
+	$nome_new=$registo["nome"];
+	$email=$registo["email"];
+	
+	
+    $sql_code = "INSERT INTO `protocolo` (`id`, `codigo`, `nome`, `email`, `sequencia`, `estado`) VALUES (NULL, '$cd', '$nome_new', '$email', '$sequencia', '1')";
+	mysqli_query($con, $sql_code) or die("Dados nao gravados!");
+	
+//	 if($mysqli->query($sql_code)){
+//      $msg = "Arquivo enviado com sucesso!";
+//	 }
+//    else{
+//      $msg = "Falha ao enviar arquivo.";
+//	}
+//echo'<script type="text/javascript">window.location.reload();</script>';
+
+  }
+
+?>

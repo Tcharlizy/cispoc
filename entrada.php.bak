@@ -1,0 +1,119 @@
+<?php
+	$sql =  "select count(*) as total from `gestao_usuarios`";
+	$resultado = mysqli_query($con, $sql) or die ("Dados nao encontrados!");
+	$data=mysqli_fetch_assoc($resultado);
+	$total=$data['total'];
+	
+	$sql =  "select count(*) as pendentes from `gestao_usuarios` where `ESTADO`='1'";
+	$resultado = mysqli_query($con, $sql) or die ("Dados nao encontrados!");
+	$data=mysqli_fetch_assoc($resultado);
+	$pendentes=$data['pendentes'];
+	$percent_pendentes=round((($pendentes/$total)*100),2);
+
+	
+	$sql =  "select count(*) as aprovados from `gestao_usuarios` where `ESTADO`='2'";
+	$resultado = mysqli_query($con, $sql) or die ("Dados nao encontrados!");
+	$data=mysqli_fetch_assoc($resultado);
+	$aprovados=$data['aprovados'];
+	$percent_aprovados=round((($aprovados/$total)*100),2);
+	
+	$sql =  "select count(*) as expirados from `gestao_usuarios` where `ESTADO`='3'";
+	$resultado = mysqli_query($con, $sql) or die ("Dados nao encontrados!");
+	$data=mysqli_fetch_assoc($resultado);
+	$expirados=$data['expirados'];
+	$percent_expirados=round((($expirados/$total)*100),2);
+
+	
+	$sql =  "select count(*) as rejeitado from `gestao_usuarios` where `ESTADO`='0' ";
+	$resultado = mysqli_query($con, $sql) or die ("Dados nao encontrados!");
+	$data=mysqli_fetch_assoc($resultado);
+	$rejeitado=$data['rejeitado'];
+	$percent_rejeitado=round((($rejeitado/$total)*100),2);
+	
+
+
+	
+
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+</head>
+<body>
+<p style="font-size:22px; padding-top:4em; padding-left:1em">Notificações</p>
+<div style="width:100%; display: flex; ">
+
+	<div style="width:50%">
+	<canvas id="myChart"></canvas>
+	<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+	<script>
+		
+		  // unica diferença é que você receberá o json dinamicamente
+		  // valor que chegará da requisição            
+		  let json = JSON.parse('{ "Pendentes":<?php echo $percent_pendentes?> , "Aprovados":<?php echo $percent_aprovados?>, "Expirados":<?php echo $percent_expirados?> , "Rejeitados":<?php echo $percent_rejeitado?>, "Meta":100}')
+
+		  // cria uma array para nomes e valore
+		  let nomes = [];
+		  let valores = [];
+
+		  // percorre o json
+		  for(let i in json){
+			 // adiciona na array nomes a key do campo do json
+			 nomes.push(i);
+			 // adiciona na array de valore o value do campo do json
+			 valores.push(json[i]);
+		  }
+
+		  var ctx = document.getElementById('myChart').getContext('2d');
+		  var myChart = new Chart(ctx, {
+		  type: 'bar',
+		  data: {
+			  //labels são cada uma das barrinhas. Basta adicionar a array abaixo:
+			  labels: nomes,
+			  datasets: [{
+				  label: '# Estatística',
+				  //data serve para adicionar o valor de cada barrinha. Basta adicionar a array abaixo:
+				  data: valores,
+				  backgroundColor: [
+					  'rgba(255, 99, 132, 0.2)',
+					  'rgba(54, 162, 235, 0.2)',
+					  'rgba(255, 206, 86, 0.2)',
+					  'rgba(75, 192, 192, 0.2)',
+					  'rgba(153, 102, 255, 0.2)',
+					  'rgba(255, 159, 64, 0.2)'
+				  ],
+				  borderColor: [
+					  'rgba(255, 99, 132, 1)',
+					  'rgba(54, 162, 235, 1)',
+					  'rgba(255, 206, 86, 1)',
+					  'rgba(75, 192, 192, 1)',
+					  'rgba(153, 102, 255, 1)',
+					  'rgba(255, 159, 64, 1)'
+				  ],
+				  borderWidth: 1
+			  }]
+		  },
+		  options: {
+			  scales: {
+				  yAxes: [{
+					  ticks: {
+						  beginAtZero: true
+					  }
+				  }]
+			  }
+		  }
+	  });
+	   
+
+	</script>
+	</div>
+	<div style="width:50%; float:right">
+	<p>Tarefas ressentes</p>
+	<?php
+	include "painel.php"
+	?>
+	</div>
+</div>
+
+</body>
